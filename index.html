@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>财务采购IR年度团建 · 目的地投票</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;line-height:1.7}
+.header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;text-align:center;padding:40px 20px 36px;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 50%,rgba(255,255,255,0.05) 0%,transparent 50%);pointer-events:none}
+.header h1{font-size:28px;font-weight:700;letter-spacing:2px;position:relative}
+.header p{font-size:15px;opacity:0.8;margin-top:8px;position:relative}
+.sync-status{position:absolute;top:12px;right:20px;font-size:12px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:6px}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#27ae60;animation:pulse 2s infinite}
+.sync-dot.offline{background:#e74c3c;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.quick-vote-bar{background:#fff;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.quick-vote-bar .quick-title{font-size:15px;font-weight:600;color:#333;margin-bottom:14px}
+.quick-vote-bar .quick-buttons{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.quick-vote-btn{padding:14px 40px;border:2px solid #e74c3c;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.25s;background:#fff;color:#e74c3c}
+.quick-vote-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.12)}
+.quick-vote-btn.voted{background:#27ae60;color:#fff;border-color:#27ae60}
+.quick-vote-btn.not-voted{background:#fff;color:#888;border-color:#ccc}
+.quick-vote-bar .quick-hint{font-size:12px;color:#999;margin-top:10px}
+.stats-bar{background:#fff;padding:16px 20px;display:flex;justify-content:center;align-items:center;gap:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.stats-bar .stat-item{font-size:14px;color:#666}
+.stats-bar .stat-item strong{color:#0f3460;font-size:18px;font-weight:700}
+.stats-bar .vote-badge{background:#e74c3c;color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
+.stats-bar .vote-badge.voted{background:#27ae60}
+.container{max-width:1400px;margin:0 auto;padding:30px 16px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
+.dest-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);transition:transform 0.3s,box-shadow 0.3s}
+.dest-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+.dest-hero{width:100%;height:200px;overflow:hidden;position:relative}
+.dest-hero img{width:100%;height:100%;object-fit:cover}
+.dest-hero .hero-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:30px 24px 20px}
+.dest-hero .hero-overlay h2{color:#fff;font-size:26px;font-weight:700}
+.dest-hero .hero-overlay .subtitle{color:rgba(255,255,255,0.9);font-size:14px;margin-top:4px}
+.card-body{padding:24px}
+.dest-intro{font-size:15px;color:#555;line-height:1.8;margin-bottom:28px;padding:16px 20px;background:#f8f9fa;border-radius:10px;border-left:4px solid #0f3460}
+.section-title{font-size:18px;font-weight:700;color:#1a1a2e;margin:24px 0 16px;padding-left:12px;border-left:4px solid #e74c3c;display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:22px}
+.spot-item{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid #f0f0f0}
+.spot-item:last-child{border-bottom:none}
+.spot-item h3{font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.spot-item p{font-size:14px;color:#666;line-height:1.8;margin-bottom:12px}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.img-grid img{width:100%;height:140px;object-fit:cover;border-radius:8px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
+.img-grid img:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.food-card{background:#fff;border:1px solid #eee;border-radius:10px;overflow:hidden;transition:box-shadow 0.2s}
+.food-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+.food-card img{width:100%;height:130px;object-fit:cover}
+.food-card .food-info{padding:10px 12px}
+.food-card h4{font-size:14px;font-weight:700;color:#333;margin-bottom:4px}
+.food-card p{font-size:12px;color:#888;line-height:1.6}
+.vote-section{text-align:center;padding:24px 0 8px;border-top:2px solid #f0f0f0;margin-top:20px}
+.vote-btn{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;padding:14px 48px;font-size:16px;font-weight:700;border-radius:30px;cursor:pointer;transition:all 0.3s;letter-spacing:1px}
+.vote-btn:hover:not(:disabled){transform:scale(1.05);box-shadow:0 6px 20px rgba(231,76,60,0.4)}
+.vote-btn:disabled{background:#95a5a6;cursor:not-allowed}
+.vote-btn.voted{background:linear-gradient(135deg,#27ae60,#229954);cursor:pointer}
+.vote-btn.not-voted{background:#fff;color:#999;border:2px solid #ddd;cursor:pointer}
+.vote-btn.not-voted:hover{border-color:#e74c3c;color:#e74c3c;transform:scale(1.03)}
+.vote-hint{font-size:12px;color:#bbb;margin-top:8px}
+.vote-count{font-size:13px;color:#999;margin-top:10px}
+.cancel-vote-btn{display:inline-block;background:none;border:1px solid #e0e0e0;color:#e74c3c;padding:4px 16px;border-radius:16px;cursor:pointer;font-size:13px;margin-left:12px;transition:all 0.2s}
+.cancel-vote-btn:hover{background:#e74c3c;color:#fff;border-color:#e74c3c}
+.results-hidden{display:none!important}
+.results-section{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,0.06);grid-column:1/-1}
+.results-section h2{font-size:20px;color:#1a1a2e;margin-bottom:16px;text-align:center}
+.result-bar{display:flex;align-items:center;margin-bottom:12px;gap:12px}
+.result-bar .bar-label{width:80px;font-size:14px;font-weight:600;color:#333;text-align:right}
+.result-bar .bar-track{flex:1;height:28px;background:#f0f0f0;border-radius:14px;overflow:hidden;position:relative}
+.result-bar .bar-fill{height:100%;border-radius:14px;transition:width 0.5s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;color:#fff;font-size:13px;font-weight:700;min-width:30px}
+.lightbox{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;justify-content:center;align-items:center;cursor:pointer}
+.lightbox.show{display:flex}
+.lightbox img{max-width:90%;max-height:90%;border-radius:8px}
+@media(max-width:1024px){.container{grid-template-columns:repeat(2,1fr);max-width:900px}}
+@media(max-width:680px){.container{grid-template-columns:1fr;max-width:500px}.header h1{font-size:22px}.dest-hero{height:200px}.dest-hero .hero-overlay h2{font-size:24px}.img-grid{grid-template-columns:repeat(2,1fr)}.food-grid{grid-template-columns:1fr}.vote-btn{padding:12px 36px;font-size:15px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="sync-status" id="syncStatus">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncText">在线同步中</span>
+  </div>
+  <h1>财务采购IR · 年度团建目的地投票</h1>
+  <p>三选一 · 一人一票 · 可随时改票 · 请选择你最想去的目的地</p>
+</div>
+
+<div class="quick-vote-bar" id="quickVoteBar">
+  <div class="quick-title">快速投票入口</div>
+  <div class="quick-buttons">
+    <button class="quick-vote-btn" id="quick-taizhou" onclick="castVote('taizhou')">台州</button>
+    <button class="quick-vote-btn" id="quick-lishui" onclick="castVote('lishui')">丽水</button>
+    <button class="quick-vote-btn" id="quick-yangzhou" onclick="castVote('yangzhou')">扬州</button>
+  </div>
+  <div class="quick-hint" id="quickHint">投完票即可查看实时投票结果</div>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item">已投票：<strong id="totalVotes">0</strong> 票</div>
+  <div class="stat-item" id="voteStatus">你还未投票</div>
+  <div class="vote-badge" id="voteBadge" style="display:none;">已投票</div>
+  <button class="cancel-vote-btn" id="cancelVoteBtn" style="display:none;" onclick="cancelVote()">取消投票</button>
+</div>
+
+<div class="container">
+  <div class="results-section results-hidden" id="resultsSection">
+    <h2>&#x1F4CA; 实时投票结果</h2>
+    <div id="resultsList"></div>
+  </div>
+
+  <!-- 台州 -->
+  <div class="dest-card" id="card-taizhou">
+    <div class="dest-hero">
+      <img src="docx_images/image1.jpg" alt="神仙居" onerror="this.src='docx_images/image8.jpg'" loading="lazy">
+      <div class="hero-overlay"><h2>台州</h2><div class="subtitle">山海之城 · 千年烟火</div></div>
+    </div>
+    <div class="card-body">
+      <div class="dest-intro">台州，山海之城，一半是江南府城的千年烟火，一半是东海之滨的鲜味江湖。从临海古城的糯叽叽小吃到温岭石塘的第一缕曙光，台州用"鲜"与"糯"征服每一位来客。</div>
+      <div class="section-title"><span class="icon">&#x1F3DE;&#xFE0F;</span> 景点</div>
+      <div class="spot-item"><h3>神仙居</h3><p>全球最大的火山流纹岩地貌群，堪称现实版的仙侠世界。奇峰云海、瀑布溪流美到失语，必打卡如意桥、观音峰和南天顶玻璃观景台。建议北索道上、南索道下，全程不走回头路，轻松省力。</p><div class="img-grid"><img src="docx_images/image1.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image2.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image3.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>天台山</h3><p>藏在山里的仙境，核心景点包括免费开放的千年古刹国清寺（隋代古刹，禅意十足，寺外稻田和隋塔超出片）、落差325米的天台山大瀑布，以及有"小九寨"之称的琼台仙谷。</p><div class="img-grid"><img src="docx_images/image4.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image5.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image6.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image7.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>台州府城（江南长城）</h3><p>被誉为"江南长城"的千年府城，城墙依山而建，蜿蜒起伏。建议从揽胜门上，俯瞰整个临海古城和东湖。早上7点前和晚上6点后免门票，非常划算。</p><div class="img-grid"><img src="docx_images/image8.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image9.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image10.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>紫阳古街</h3><p>位于临海，全长1080米，是浙江最被低估的古街之一。青石板路两旁老店林立，海苔饼、蛋清羊尾、乌饭麻糍等"糯叽叽"美食一路吃不停，烟火气拉满。</p><div class="img-grid"><img src="docx_images/image11.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image12.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image13.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>温岭石塘</h3><p>中国大陆新千年第一缕曙光首照地，山海风光一绝。马卡龙色的七彩小箬村像掉进了童话世界，对戒观景台一半是山一半是海，金沙滩细腻干净，非常适合看日落和拍ins风大片。</p><div class="img-grid"><img src="docx_images/image14.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image15.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>长屿硐天</h3><p>拥有吉尼斯世界纪录的世界最大人工石硐群，28个硐窟纵横交错。可以在观夕硐里泛舟地下河，感受岩洞音乐厅的天然混响，非常震撼。</p><div class="img-grid"><img src="docx_images/image16.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image17.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image18.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>大陈岛</h3><p>被誉为"东海明珠"的国家级海岛公园，山海风光壮丽。可以在甲午岩观海惊涛拍岸，在鸡笼头看日出，感受纯粹的海岛渔家生活。</p><div class="img-grid"><img src="docx_images/image19.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image20.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image21.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>黄岩石窟</h3><p>相比长屿硐天更年轻化，幽蓝的湖水、咖啡厅和壁画展览很适合拍照，还可以坐人力小船泛舟地下河，体验感极佳。</p><div class="img-grid"><img src="docx_images/image22.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image23.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image24.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="section-title"><span class="icon">&#x1F35C;</span> 吃</div>
+      <div class="food-grid">
+        <div class="food-card"><img src="docx_images/image25.jpg" loading="lazy"><div class="food-info"><h4>海苔饼</h4><p>临海紫阳街特色，外皮酥脆，内馅咸甜交织，刚出炉时香气最浓郁。</p></div></div>
+        <div class="food-card"><img src="docx_images/image28.jpg" loading="lazy"><div class="food-info"><h4>乌饭麻糍</h4><p>用乌饭树叶汁浸泡糯米制成，软糯Q弹，常包裹豆沙或芝麻馅。</p></div></div>
+        <div class="food-card"><img src="docx_images/image31.jpg" loading="lazy"><div class="food-info"><h4>温岭嵌糕</h4><p>台州人经典早餐，粳米年糕做皮，包入红烧肉、豆腐干、土豆丝等丰富馅料。</p></div></div>
+        <div class="food-card"><img src="docx_images/image34.jpg" loading="lazy"><div class="food-info"><h4>蛋清羊尾</h4><p>临海非遗小吃，打发蛋清包裹豆沙油炸，金黄圆润，口感绵软甜香。</p></div></div>
+        <div class="food-card"><img src="docx_images/image37.jpg" loading="lazy"><div class="food-info"><h4>泡虾</h4><p>面糊包裹肉末和虾仁油炸，外酥内鲜，个头大且用料足。</p></div></div>
+        <div class="food-card"><img src="docx_images/image43.jpg" loading="lazy"><div class="food-info"><h4>麦虾</h4><p>用麦粉做的特色面食，汤头清淡入味，搭配鲜虾、鸡蛋等配料，非常鲜香。</p></div></div>
+        <div class="food-card"><img src="docx_images/image44.jpg" loading="lazy"><div class="food-info"><h4>姜汤面</h4><p>以辛香姜汁为汤底，搭配米面、鲜虾、鸡蛋等，辛辣鲜香，驱寒祛湿。</p></div></div>
+        <div class="food-card"><img src="docx_images/image47.jpg" loading="lazy"><div class="food-info"><h4>食饼筒</h4><p>薄韧饼皮包裹蛋皮、米面、笋丝、肉片等十几种馅料，一口吃到山海融合的滋味。</p></div></div>
+        <div class="food-card"><img src="docx_images/image50.jpg" loading="lazy"><div class="food-info"><h4>炊饭</h4><p>糯米饭浇上肉末、油条、雪菜等浇头，再淋上汤汁，台州人钟爱的早餐。</p></div></div>
+        <div class="food-card"><img src="docx_images/image53.jpg" loading="lazy"><div class="food-info"><h4>沙蒜豆面</h4><p>沙蒜（海葵）与粉条的结合，汤汁浓稠，鲜脆嫩滑，汤汁拌饭非常香。</p></div></div>
+        <div class="food-card"><img src="docx_images/image56.jpg" loading="lazy"><div class="food-info"><h4>家烧黄鱼</h4><p>台州海鲜的代表，鱼本身新鲜，汤汁拌饭堪称一绝。</p></div></div>
+        <div class="food-card"><img src="docx_images/image59.jpg" loading="lazy"><div class="food-info"><h4>葱炒竹蛏</h4><p>鲜美竹蛏搭配葱段炒制，锅气十足，是家烧店的常客。</p></div></div>
+      </div>
+      <div class="vote-section">
+        <button class="vote-btn" onclick="castVote('taizhou')">投台州一票</button>
+        <div class="vote-hint" id="hint-taizhou"></div>
+        <div class="vote-count" id="count-taizhou">0 票</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 丽水 -->
+  <div class="dest-card" id="card-lishui">
+    <div class="dest-hero">
+      <img src="docx_images/image61.jpg" alt="云和梯田" onerror="this.src='docx_images/image69.jpg'" loading="lazy">
+      <div class="hero-overlay"><h2>丽水</h2><div class="subtitle">最后的江南秘境</div></div>
+    </div>
+    <div class="card-body">
+      <div class="dest-intro">丽水，浙江的"绿谷"，被《国家地理》誉为"最后的江南秘境"。这里有云和梯田的壮美、松阳古村的静谧、缙云仙都的仙气，更有各县市独具特色的山城风味。</div>
+      <div class="section-title"><span class="icon">&#x1F3DE;&#xFE0F;</span> 景点</div>
+      <div class="spot-item"><h3>云和梯田</h3><p>中国最美梯田之一，5-6月镜面梯田和10月金色稻浪最为绝美。推荐在九曲云环或七星墩观景台守候日出，云海翻涌时仿佛置身仙境。</p><div class="img-grid"><img src="docx_images/image61.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image62.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image63.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>南尖岩</h3><p>集合了云海、梯田、奇峰三绝，玻璃栈道非常刺激，夜晚的星空银河也极其震撼，适合喜欢摄影和户外徒步的游客。</p><div class="img-grid"><img src="docx_images/image64.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image65.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image66.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>龙泉山</h3><p>登顶江浙第一高峰黄茅尖，感受"江浙之巅"的壮阔，夏季更是绝佳的避暑胜地，还能顺便探访龙泉青瓷发源地。</p><div class="img-grid"><img src="docx_images/image67.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image68.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>松阳古村落</h3><p>被《国家地理》认证的"最后的江南秘境"。陈家铺村有悬崖上的先锋书店，杨家堂村则是黄昏时分泛着金光的"江南版布达拉宫"，非常适合慢节奏漫游。</p><div class="img-grid"><img src="docx_images/image69.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image70.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image71.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>缙云仙都风景区</h3><p>5A级景区，也是《花千骨》《仙剑奇侠传》等影视剧的取景地。鼎湖峰拔地而起，朱潭山的"老农牵牛"是经典打卡画面，岩宕书房的光影也极具特色。</p><div class="img-grid"><img src="docx_images/image72.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image73.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image74.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>古堰画乡</h3><p>一半是千年水利奇迹通济堰，一半是文艺古街。可以乘船跨瓯江，体验竹筏漂流，在千年古樟树下发呆，感受"丽水巴比松画派"的艺术氛围。</p><div class="img-grid"><img src="docx_images/image75.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image76.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image77.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>岩下石头村</h3><p>位于缙云，全村200多幢房子全是石头垒成，自带天然空调，夏季非常凉爽，适合带娃避暑和探索石头迷宫。</p><div class="img-grid"><img src="docx_images/image78.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image79.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image80.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>松阳鹰嘴潭</h3><p>小众秘境，有草甸、溪水和牛羊，被称为松阳版的"阿勒泰"，非常适合亲子露营和周末放松。</p><div class="img-grid"><img src="docx_images/image81.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image82.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image83.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="section-title"><span class="icon">&#x1F35C;</span> 吃</div>
+      <div class="food-grid">
+        <div class="food-card"><img src="docx_images/image84.jpg" loading="lazy"><div class="food-info"><h4>缙云烧饼</h4><p>丽水美食"头号名片"，炭火烘烤，饼皮焦脆，内馅梅干菜扣肉，趁热吃最绝。</p></div></div>
+        <div class="food-card"><img src="docx_images/image86.jpg" loading="lazy"><div class="food-info"><h4>敲肉羹</h4><p>宴席必备，肉片薄如蝉翼，汤底浓郁鲜香，一口下去非常顺喉。</p></div></div>
+        <div class="food-card"><img src="docx_images/image89.jpg" loading="lazy"><div class="food-info"><h4>豆腐圆</h4><p>豆腐衣包裹鲜肉馅，滑嫩鲜爽，浇上秘制酱汁，口感惊艳。</p></div></div>
+        <div class="food-card"><img src="docx_images/image90.jpg" loading="lazy"><div class="food-info"><h4>煨盐鸡</h4><p>松阳老街必吃，只用盐在土灶里煨制，皮脆肉嫩、爆汁鲜香。</p></div></div>
+        <div class="food-card"><img src="docx_images/image93.jpg" loading="lazy"><div class="food-info"><h4>炒黄米粿</h4><p>比普通年糕多了醇厚米香，加辣椒爆炒入味，口感软韧上头。</p></div></div>
+        <div class="food-card"><img src="docx_images/image96.jpg" loading="lazy"><div class="food-info"><h4>灯盏盘</h4><p>造型别致的外酥里嫩小吃，是本地传统特色。</p></div></div>
+        <div class="food-card"><img src="docx_images/image97.jpg" loading="lazy"><div class="food-info"><h4>泡精肉</h4><p>经典油炸小吃，外酥里嫩，咸甜口越吃越香，推荐新伟熟食。</p></div></div>
+        <div class="food-card"><img src="docx_images/image98.jpg" loading="lazy"><div class="food-info"><h4>稀卤螟脯</h4><p>丽水百年名菜，浓稠鲜香的羹汤，老丽水人的宴席压桌硬菜。</p></div></div>
+        <div class="food-card"><img src="docx_images/image99.jpg" loading="lazy"><div class="food-info"><h4>高井弄烧饼油条</h4><p>藏在小巷里的老早餐，油条酥脆，搭配咸甜豆浆，充满烟火气。</p></div></div>
+        <div class="food-card"><img src="docx_images/image102.jpg" loading="lazy"><div class="food-info"><h4>老陶大馄饨</h4><p>茭白猪肉馅，个头大，加2元猪油渣更是灵魂。</p></div></div>
+        <div class="food-card"><img src="docx_images/image104.jpg" loading="lazy"><div class="food-info"><h4>油菜火锅</h4><p>清新爽口，油菜、香菇、豆腐泡和猪肉炖得入味，带有红酒糟香气。</p></div></div>
+        <div class="food-card"><img src="docx_images/image106.jpg" loading="lazy"><div class="food-info"><h4>酒糟大肠</h4><p>酒香浓郁，肉质酥烂，喜欢酒味的朋友会非常爱。</p></div></div>
+        <div class="food-card"><img src="docx_images/image109.jpg" loading="lazy"><div class="food-info"><h4>青田田鱼</h4><p>肉质细嫩，鳞片也可食用，是当地特色水产。</p></div></div>
+        <div class="food-card"><img src="docx_images/image111.jpg" loading="lazy"><div class="food-info"><h4>青田山粉饺</h4><p>皮Q馅足，充满农家风味。</p></div></div>
+        <div class="food-card"><img src="docx_images/image114.jpg" loading="lazy"><div class="food-info"><h4>遂昌长粽</h4><p>造型独特，馅料丰富扎实，咬一口很满足。</p></div></div>
+        <div class="food-card"><img src="docx_images/image117.jpg" loading="lazy"><div class="food-info"><h4>遂昌辣排</h4><p>香辣过瘾，肉质酥烂入味，适合喜欢微辣的朋友。</p></div></div>
+      </div>
+      <div class="vote-section">
+        <button class="vote-btn" onclick="castVote('lishui')">投丽水一票</button>
+        <div class="vote-hint" id="hint-lishui"></div>
+        <div class="vote-count" id="count-lishui">0 票</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 扬州 -->
+  <div class="dest-card" id="card-yangzhou">
+    <div class="dest-hero">
+      <img src="docx_images/image119.jpg" alt="瘦西湖" onerror="this.src='docx_images/image135.jpg'" loading="lazy">
+      <div class="hero-overlay"><h2>扬州</h2><div class="subtitle">烟花三月下扬州 · 淮扬菜之乡</div></div>
+    </div>
+    <div class="card-body">
+      <div class="dest-intro">扬州，一座有着2500年历史的文化名城。"烟花三月下扬州"，这里有瘦西湖的婉约、个园的雅致、东关街的烟火，更有淮扬菜的精细与早茶的悠闲。</div>
+      <div class="section-title"><span class="icon">&#x1F3DE;&#xFE0F;</span> 景点</div>
+      <div class="spot-item"><h3>瘦西湖</h3><p>扬州的标志性景点，融合了自然山水与古典园林。五亭桥、二十四桥、白塔都是经典打卡地，建议南门进北门出，乘坐手摇船体验更佳。</p><div class="img-grid"><img src="docx_images/image119.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image120.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image121.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image122.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>个园</h3><p>以四季假山闻名，竹林清幽，一步一景，是盐商园林的代表作，傍晚夜游别有一番风味。</p><div class="img-grid"><img src="docx_images/image123.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image124.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image125.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>何园</h3><p>晚清第一园，复道回廊和中西合璧的建筑非常出片，也是《上错花轿嫁对郎》的取景地。</p><div class="img-grid"><img src="docx_images/image126.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image127.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image128.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>中国大运河博物馆</h3><p>扬州新地标，沉浸式展厅氛围感拉满，3号馆的复刻古街和裸眼5D体验非常震撼，适合夏天避暑游玩。务必提前7天预约。</p></div>
+      <div class="spot-item"><h3>扬州博物馆</h3><p>国家一级博物馆，馆藏"元霁蓝釉白龙纹梅瓶"是镇馆之宝，适合对历史和文化感兴趣的游客。</p><div class="img-grid"><img src="docx_images/image129.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image130.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image131.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image132.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image133.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image134.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>东关街</h3><p>千年古街，青石板路配上红灯笼，夜晚氛围感十足，街上有许多非遗小店和特色小吃。</p><div class="img-grid"><img src="docx_images/image135.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image136.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image137.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>皮市街</h3><p>文艺小清新街区，咖啡店、文创店扎堆，适合年轻人逛吃拍照。</p><div class="img-grid"><img src="docx_images/image138.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image139.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image140.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>彩衣街</h3><p>与东关街相连，本地人也爱逛的老街，烟火气更浓，小吃价格更亲民。</p><div class="img-grid"><img src="docx_images/image141.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image142.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image143.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>大明寺</h3><p>千年古刹，登栖灵塔可俯瞰瘦西湖全景，禅意静谧，适合散心。</p><div class="img-grid"><img src="docx_images/image144.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image145.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image146.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image147.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="spot-item"><h3>观音山</h3><p>扬州最高点，隋唐时期"迷楼"故址，宋代始建寺，被称为"第一灵山"。</p><div class="img-grid"><img src="docx_images/image148.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image149.jpg" onclick="openLightbox(this)" loading="lazy"><img src="docx_images/image150.jpg" onclick="openLightbox(this)" loading="lazy"></div></div>
+      <div class="section-title"><span class="icon">&#x1F35C;</span> 吃</div>
+      <div class="food-grid">
+        <div class="food-card"><img src="docx_images/image151.jpg" loading="lazy"><div class="food-info"><h4>蟹粉狮子头</h4><p>扬州菜招牌，猪肉细切粗斩，加入蟹粉慢炖，口感软嫩入口即化。</p></div></div>
+        <div class="food-card"><img src="docx_images/image154.jpg" loading="lazy"><div class="food-info"><h4>大煮干丝</h4><p>极考验刀工，豆腐干切如发丝，搭配鸡汤、火腿熬煮，鲜香浓郁。</p></div></div>
+        <div class="food-card"><img src="docx_images/image157.jpg" loading="lazy"><div class="food-info"><h4>文思豆腐</h4><p>嫩豆腐切成数千根细丝，漂浮清汤中，入口即化，扬州厨师刀工极致体现。</p></div></div>
+        <div class="food-card"><img src="docx_images/image160.jpg" loading="lazy"><div class="food-info"><h4>扬州炒饭</h4><p>正宗配料丰富（海参、虾仁、火腿等），米饭粒粒分明，爽口不腻。</p></div></div>
+        <div class="food-card"><img src="docx_images/image163.jpg" loading="lazy"><div class="food-info"><h4>三丁包</h4><p>馅料含海参丁、虾仁丁、红烧肉丁等，鲜香肉嫩，皮薄筋软。</p></div></div>
+        <div class="food-card"><img src="docx_images/image166.jpg" loading="lazy"><div class="food-info"><h4>蟹黄汤包</h4><p>皮薄如纸，咬开小口蟹黄汤汁直往外淌，满口蟹香。</p></div></div>
+        <div class="food-card"><img src="docx_images/image169.jpg" loading="lazy"><div class="food-info"><h4>千层油糕</h4><p>层层叠叠，蓬松宣软，甜而不腻，扬州点心经典。</p></div></div>
+        <div class="food-card"><img src="docx_images/image172.jpg" loading="lazy"><div class="food-info"><h4>翡翠烧麦</h4><p>以青菜为馅，皮薄如纸，馅心碧绿，清甜爽口。</p></div></div>
+        <div class="food-card"><img src="docx_images/image175.jpg" loading="lazy"><div class="food-info"><h4>扬州老鹅</h4><p>扬州人日常最爱的卤味，鹅肉鲜嫩不柴，卤汁咸香，现切半只带回家是最佳伴手礼。</p></div></div>
+        <div class="food-card"><img src="docx_images/image178.jpg" loading="lazy"><div class="food-info"><h4>东关街小吃</h4><p>包括梅花糕、金刚蹄、炸臭干、仙豆糕等，适合边逛边吃。</p></div></div>
+        <div class="food-card"><img src="docx_images/image181.jpg" loading="lazy"><div class="food-info"><h4>扬大酸奶</h4><p>茉莉花味最出名，清香解腻，几乎每个超市都有，当地人气最高饮品。</p></div></div>
+      </div>
+      <div class="vote-section">
+        <button class="vote-btn" onclick="castVote('yangzhou')">投扬州一票</button>
+        <div class="vote-hint" id="hint-yangzhou"></div>
+        <div class="vote-count" id="count-yangzhou">0 票</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="">
+</div>
+
+<script>
+// ============================================================
+// 投票系统 FINAL — Express API，1.5s 轮询
+// ============================================================
+(function(){
+var destNames = { taizhou: '台州', lishui: '丽水', yangzhou: '扬州' };
+var colors = { taizhou: '#e74c3c', lishui: '#27ae60', yangzhou: '#2980b9' };
+
+var UID_KEY = 'vote_final_uid';
+var USER_ID = localStorage.getItem(UID_KEY);
+if (!USER_ID) {
+  USER_ID = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  localStorage.setItem(UID_KEY, USER_ID);
+}
+
+var lastTotal = -1;
+var lastRecords = {};
+var fetching = false;
+
+function setSync(s) {
+  var d = document.getElementById('syncDot');
+  var t = document.getElementById('syncText');
+  if (s === 'online') { d.classList.remove('offline'); t.textContent = '实时同步中'; }
+  else { d.classList.add('offline'); t.textContent = '离线'; }
+}
+
+// ---- Poll from server ----
+function poll() {
+  if (fetching) return;
+  fetching = true;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/api/votes', true);
+  xhr.timeout = 5000;
+  xhr.onload = function() {
+    fetching = false;
+    if (xhr.status !== 200) { setSync('offline'); return; }
+    setSync('online');
+    try {
+      var data = JSON.parse(xhr.responseText);
+      var r = data.records || {};
+      var c = data.counts || { taizhou: 0, lishui: 0, yangzhou: 0 };
+      render(r, c);
+      lastRecords = r;
+      lastTotal = c.taizhou + c.lishui + c.yangzhou;
+    } catch(e) {}
+  };
+  xhr.onerror = function() { fetching = false; setSync('offline'); };
+  xhr.ontimeout = function() { fetching = false; setSync('offline'); };
+  xhr.send();
+}
+
+// ---- Vote ----
+function castVote(dest) {
+  render({}, { taizhou: dest==='taizhou'?1:0, lishui: dest==='lishui'?1:0, yangzhou: dest==='yangzhou'?1:0 }, dest);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/vote', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.timeout = 5000;
+  xhr.onload = function() {
+    if (xhr.status === 200) { poll(); }
+    else { setSync('offline'); }
+  };
+  xhr.onerror = function() { setSync('offline'); };
+  xhr.send(JSON.stringify({ userId: USER_ID, destination: dest }));
+
+  setTimeout(function() {
+    var el = document.getElementById('resultsSection');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+function cancelVote() {
+  render({}, { taizhou: 0, lishui: 0, yangzhou: 0 });
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('DELETE', '/api/vote', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.timeout = 5000;
+  xhr.onload = function() { if (xhr.status === 200) poll(); };
+  xhr.onerror = function() { setSync('offline'); };
+  xhr.send(JSON.stringify({ userId: USER_ID }));
+}
+
+// ---- Render UI ----
+function render(records, counts, optimisticDest) {
+  var v = counts || { taizhou: 0, lishui: 0, yangzhou: 0 };
+  var total = v.taizhou + v.lishui + v.yangzhou;
+  var myVote = optimisticDest || records[USER_ID] || null;
+
+  document.getElementById('totalVotes').textContent = total;
+
+  var statusEl = document.getElementById('voteStatus');
+  var badgeEl = document.getElementById('voteBadge');
+  var resultsEl = document.getElementById('resultsSection');
+  if (myVote) {
+    statusEl.innerHTML = '你已投票：<strong>' + destNames[myVote] + '</strong>（可改票）';
+    badgeEl.style.display = 'inline-block';
+    badgeEl.className = 'vote-badge voted';
+    badgeEl.textContent = '已投 ' + destNames[myVote];
+    document.getElementById('cancelVoteBtn').style.display = 'inline-block';
+    resultsEl.classList.remove('results-hidden');
+    document.getElementById('quickHint').textContent = '已投票，可随时改投或取消';
+  } else {
+    statusEl.textContent = '你还未投票';
+    badgeEl.style.display = 'none';
+    document.getElementById('cancelVoteBtn').style.display = 'none';
+    resultsEl.classList.add('results-hidden');
+    document.getElementById('quickHint').textContent = '投完票即可查看实时投票结果';
+  }
+
+  document.getElementById('count-taizhou').textContent = v.taizhou + ' 票';
+  document.getElementById('count-lishui').textContent = v.lishui + ' 票';
+  document.getElementById('count-yangzhou').textContent = v.yangzhou + ' 票';
+
+  ['taizhou','lishui','yangzhou'].forEach(function(d) {
+    var btn = document.querySelector('#card-'+d+' .vote-btn');
+    var hint = document.querySelector('#card-'+d+' .vote-hint');
+    if (!btn) return;
+    btn.disabled = false;
+    btn.classList.remove('voted','not-voted');
+    if (myVote === d) {
+      btn.classList.add('voted');
+      btn.textContent = '\u2713 已投' + destNames[d];
+      if (hint) hint.textContent = '点击其他目的地可改票';
+    } else if (myVote) {
+      btn.classList.add('not-voted');
+      btn.textContent = '改投' + destNames[d];
+      if (hint) hint.textContent = '';
+    } else {
+      btn.textContent = '投' + destNames[d] + '一票';
+      if (hint) hint.textContent = '';
+    }
+
+    var qb = document.getElementById('quick-'+d);
+    if (!qb) return;
+    qb.classList.remove('voted','not-voted');
+    if (myVote === d) { qb.classList.add('voted'); qb.textContent = '\u2713 ' + destNames[d]; }
+    else if (myVote) { qb.classList.add('not-voted'); qb.textContent = '改投' + destNames[d]; }
+    else { qb.textContent = destNames[d]; }
+  });
+
+  var maxVal = Math.max(v.taizhou, v.lishui, v.yangzhou, 1);
+  var resultsList = document.getElementById('resultsList');
+  resultsList.innerHTML = '';
+  ['taizhou','lishui','yangzhou'].forEach(function(d) {
+    var pct = total > 0 ? Math.round(v[d] / total * 100) : 0;
+    var w = Math.round(v[d] / maxVal * 100);
+    var bar = document.createElement('div');
+    bar.className = 'result-bar';
+    bar.innerHTML = '<div class="bar-label">' + destNames[d] + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + w + '%; background:' + colors[d] + '">' +
+      v[d] + '票 ' + pct + '%</div></div>';
+    resultsList.appendChild(bar);
+  });
+}
+
+// ---- Lightbox ----
+window.openLightbox = function(img) {
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightbox').classList.add('show');
+};
+window.closeLightbox = function() {
+  document.getElementById('lightbox').classList.remove('show');
+};
+window.castVote = castVote;
+window.cancelVote = cancelVote;
+
+// Start
+setSync('online');
+poll();
+setInterval(poll, 1500);
+})();
+</script>
+</body>
+</html>
